@@ -92,137 +92,7 @@ pip install pandas numpy matplotlib seaborn scikit-learn nltk
 
 ---
 
-## 6. Complete Python Code
-
-Save this as `spam_classifier.py`:
-
-```python
-# Import libraries
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer
-import nltk
-
-# Download NLTK resources
-nltk.download('stopwords')
-
-# Initialize stemmer and stopwords
-ps = PorterStemmer()
-
-# Load dataset
-df = pd.read_csv('dataset/spam.csv', encoding='latin1')
-
-# Data cleaning - keep only label and message columns
-df = df[['v1', 'v2']]
-df.columns = ['label', 'message']
-
-# Label encoding
-df['label'] = df['label'].map({'ham': 0, 'spam': 1})
-
-# Text preprocessing function
-def preprocess_text(text):
-    # Lowercase conversion
-    text = text.lower()
-    
-    # Remove punctuation
-    import string
-    text = text.translate(str.maketrans('', '', string.punctuation))
-    
-    # Tokenization
-    words = text.split()
-    
-    # Remove stopwords and stemming
-    words = [ps.stem(word) for word in words if word not in stopwords.words('english')]
-    
-    return ' '.join(words)
-
-# Apply preprocessing
-df['processed_message'] = df['message'].apply(preprocess_text)
-
-# Display processed text
-print(df.head())
-
-# Feature extraction using TF-IDF
-vectorizer = TfidfVectorizer(max_features=3000)
-
-X = vectorizer.fit_transform(df['processed_message']).toarray()
-y = df['label']
-
-# Split dataset
-X_train, X_test, y_train, y_test = train_test_split(
-    X,
-    y,
-    test_size=0.2,
-    random_state=42
-)
-
-# Model 1: Naive Bayes
-nb_model = MultinomialNB()
-nb_model.fit(X_train, y_train)
-
-nb_predictions = nb_model.predict(X_test)
-
-# Accuracy
-nb_accuracy = accuracy_score(y_test, nb_predictions)
-
-print("Naive Bayes Accuracy:", nb_accuracy)
-
-# Classification report
-print("\nClassification Report:\n")
-print(classification_report(y_test, nb_predictions))
-
-# Confusion matrix
-cm = confusion_matrix(y_test, nb_predictions)
-
-plt.figure(figsize=(6, 4))
-sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
-plt.title('Confusion Matrix - Naive Bayes')
-plt.xlabel('Predicted')
-plt.ylabel('Actual')
-plt.show()
-
-# Model 2: Logistic Regression
-lr_model = LogisticRegression()
-lr_model.fit(X_train, y_train)
-
-lr_predictions = lr_model.predict(X_test)
-
-lr_accuracy = accuracy_score(y_test, lr_predictions)
-
-print("\nLogistic Regression Accuracy:", lr_accuracy)
-
-print("\nClassification Report:\n")
-print(classification_report(y_test, lr_predictions))
-
-# Test custom message
-sample_message = ["Congratulations! You won a free iPhone. Click now!"]
-
-# Preprocess custom message
-processed_sample = [preprocess_text(msg) for msg in sample_message]
-
-# Vectorize
-sample_vector = vectorizer.transform(processed_sample)
-
-# Predict
-prediction = nb_model.predict(sample_vector)
-
-if prediction[0] == 1:
-    print("\nPrediction: Spam Message")
-else:
-    print("\nPrediction: Ham Message")
-```
-
----
-
-## 7. Step-by-Step Explanation of the Code
+## 6. Step-by-Step Explanation of the Code
 
 ### Step 1: Import Libraries
 
@@ -268,7 +138,7 @@ df['label'] = df['label'].map({'ham': 0, 'spam': 1})
 
 ---
 
-## 8. Text Preprocessing
+## 7. Text Preprocessing
 
 Text preprocessing is one of the most important steps in NLP.
 
@@ -306,7 +176,7 @@ Examples:
 
 ---
 
-## 9. Feature Extraction Using TF-IDF
+## 8. Feature Extraction Using TF-IDF
 
 Machine learning models cannot understand raw text. So text is converted into numbers using **TF-IDF**.
 
@@ -321,7 +191,7 @@ vectorizer = TfidfVectorizer(max_features=3000)
 
 ---
 
-## 10. Train-Test Split
+## 9. Train-Test Split
 
 Dataset is divided into:
 
@@ -336,7 +206,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 ---
 
-## 11. Machine Learning Algorithms Used
+## 10. Machine Learning Algorithms Used
 
 ### 11.1 Naive Bayes
 
@@ -355,7 +225,7 @@ Used for binary classification problems.
 
 ---
 
-## 12. Model Evaluation
+## 11. Model Evaluation
 
 ### Accuracy
 Measures percentage of correct predictions.
@@ -377,7 +247,7 @@ Contains:
 
 ---
 
-## 13. Sample Output
+## 12. Sample Output
 
 ```
 Naive Bayes Accuracy: 0.97
@@ -387,7 +257,7 @@ Prediction: Spam Message
 
 ---
 
-## 14. Results
+## 13. Results
 
 | Model | Accuracy |
 |---|---|
@@ -398,7 +268,7 @@ Prediction: Spam Message
 
 ---
 
-## 15. Advantages of the Project
+## 14. Advantages of the Project
 
 - Detects spam messages automatically
 - Reduces unwanted SMS
@@ -408,7 +278,7 @@ Prediction: Spam Message
 
 ---
 
-## 16. Future Improvements
+## 15. Future Improvements
 
 Future enhancements can include:
 
@@ -421,7 +291,7 @@ Future enhancements can include:
 
 ---
 
-## 17. Conclusion
+## 16. Conclusion
 
 This project successfully developed a machine learning model for spam message classification.
 
