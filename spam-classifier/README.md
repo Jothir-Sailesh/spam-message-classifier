@@ -1,6 +1,5 @@
 # Spam Message Classification Using Machine Learning
 
-**Assignment for SHNOOR Company Selection Process**
 
 Prepared By: **Jothir Sailesh**  
 Course: **B.Tech Artificial Intelligence and Machine Learning**

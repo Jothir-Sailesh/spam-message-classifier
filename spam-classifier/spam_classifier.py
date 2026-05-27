@@ -1,72 +1,61 @@
-# Import libraries
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-import nltk
-from nltk.corpus import stopwords
-from nltk.stem.porter import PorterStemmer
-import string
 
 from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-
-# Download stopwords
-nltk.download('stopwords')
+from sklearn.metrics import accuracy_score
 
 # Load dataset
-# Replace path if needed
-file_path = 'dataset/spam.csv'
+df = pd.read_csv("dataset/spam.csv", encoding='latin1')
 
-# Read CSV
-# Some versions contain extra unnamed columns
-# encoding latin1 avoids encoding issues
-
-df = pd.read_csv(file_path, encoding='latin1')
-
-# Keep only required columns
-# Rename columns
-
+# Keep only needed columns
 df = df[['v1', 'v2']]
 df.columns = ['label', 'message']
 
-# Display first rows
-print(df.head())
-
-# Check dataset info
-print(df.info())
-
-# Check null values
-print(df.isnull().sum())
-
-# Label encoding
-# spam = 1
-# ham = 0
-
+# Convert labels
 df['label'] = df['label'].map({'ham': 0, 'spam': 1})
 
-# Text preprocessing
-ps = PorterStemmer()
+print("Dataset Loaded Successfully!")
+print(df.head())
 
+# Features and labels
+X = df['message']
+y = df['label']
 
-def preprocess_text(text):
-    # Convert to lowercase
-    text = text.lower()
+# Convert text to numbers
+cv = CountVectorizer()
 
-    # Remove punctuation
-    text = ''.join([char for char in text if char not in string.punctuation])
+X = cv.fit_transform(X)
 
-    # Tokenization
-    words = text.split()
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
+)
 
-    # Remove stopwords and stemming
-    words = [ps.stem(word) for word in words if word not in stopwords.words('english')]
+# Train model
+model = MultinomialNB()
 
-    return ' '.join(words)
+model.fit(X_train, y_train)
 
+# Predictions
+predictions = model.predict(X_test)
 
+# Accuracy
+accuracy = accuracy_score(y_test, predictions)
+
+print("\nModel Accuracy:", accuracy)
+
+# Test custom message
+sample = ["Congratulations! You won a free iPhone"]
+
+sample_data = cv.transform(sample)
+
+prediction = model.predict(sample_data)
+
+if prediction[0] == 1:
+    print("\nPrediction: Spam Message")
+else:
     print("\nPrediction: Ham Message")
